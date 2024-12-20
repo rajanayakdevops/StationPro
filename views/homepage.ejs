@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>home Page</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="output.css" />
+  </head>
+  <body>
+    <div class="search_ctr_body">
+      <form action="/loginTrainDetails" method="get">
+        <div class="show_search_icon">
+          <div class="train">
+            <img
+              src="https://edge.ixigo.com/st/vimaan/_next/static/media/train.d3e3d1e5.svg"
+              alt="train"
+            />
+            <h3 style="display: inline-flex">Trains</h3>
+          </div>
+          <div class="flight">
+            <img
+              src="https://edge.ixigo.com/st/vimaan/_next/static/media/flight.f515b25a.svg"
+              alt="flight"
+            />
+            <h3 style="display: inline-flex">Flights</h3>
+          </div>
+          <div class="buses">
+            <img
+              src="https://edge.ixigo.com/st/vimaan/_next/static/media/bus.1942c5dd.svg"
+              alt="buses"
+            />
+            <h3 style="display: inline-flex">Buses</h3>
+          </div>
+          <div class="hotels">
+            <img
+              src="https://edge.ixigo.com/st/vimaan/_next/static/media/hotel.4b63222d.svg"
+              alt=""
+            />
+            <h3 style="display: inline-flex">Hotels</h3>
+          </div>
+        </div>
+
+        <div class="to_from_ctr_body">
+          <div class="from_ctr_body place_details">
+            <label for="name"
+              ><img
+                src="https://www.confirmtkt.com/img/icons/ic-search-from-desktop.svg"
+                alt="from"
+            /></label>
+            <input
+              type="text"
+              id="from_station"
+              name="from_station"
+              placeholder="BRC - Vadodara"
+              required
+            />
+          </div>
+          <div class="to_ctr_body place_details">
+            <label for="name"
+              ><img
+                src="https://www.confirmtkt.com/img/icons/ic-search-to-desktop.svg"
+                alt="from"
+            /></label>
+            <input
+              type="text"
+              id="to_station"
+              name="to_station"
+              placeholder="Ak - Akola Jn"
+              required
+            />
+          </div>
+          <div class="select_date place_details">
+            <label for="date"
+              ><img
+                src="https://www.confirmtkt.com/img/icons/ic-search-calender-desktop.svg"
+                alt="date"
+            /></label>
+            <input
+              type="date"
+              id="date"
+              name="travel_date"
+              required
+            />
+          </div>
+          <div class="search_btn">
+            <input type="submit" value="Search Train" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <script src="../Script/getTrainDetails.js"></script>
+  </body>
+</html>

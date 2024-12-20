@@ -1,0 +1,64 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+body{
+  background-color: #f2f2f2;
+ 
+}
+.search_ctr_body{
+  margin: 60px;
+  padding: 20px;
+  width: 90vw;
+  border-radius: 10px;
+background-color: #FFFFFF;
+}
+.show_search_icon{
+  display: flex;   
+             
+}
+.train, .flight,.buses,.hotels{
+  display: flex;
+  align-items: center;
+  margin-right: 5%;
+}
+.to_from_ctr_body {
+  display: flex;
+  margin: 20px 0 20px 0px;
+}
+.show_search_icon img {
+  height: 60px;
+  width: 60px;
+}
+.place_details {
+  display: inline-flex;
+  margin-right: 30px;;
+}
+.place_details input {
+  background-color:#f2f2f2;
+  border: navajowhite;
+  padding: 10px;
+  border-radius: 5px;
+}
+.place_details img {
+height: 50px;
+width: 60px;;
+}
+.place_details input {
+  font-size: 18px;
+}
+.search_btn{
+  display: inline-flex;
+
+}
+.search_btn input {
+ 
+  padding: 0px 30px 0px 30px;
+  font-size: 24px;
+ border: none;
+ border-radius: 5px;
+ color: #FFFFFF;
+ background-color: #fc790d;
+}
