@@ -68,8 +68,26 @@
                             <i class="fa-solid fa-angle-down ml-2"></i>
                         </button>
                     </div>
+                 
 
+                 <div class="train_class flex">
+                        <div class="show_seat_available p-6">
+                            <a href="#" class="no-underline">
+                                <div class="seat_according_tier w-36 border border-[#fc790d] border-opacity-30 rounded-xl p-2 bg-[#fff5e5]">
+                                    <div class="seat_available_report mx-2">
+                                        <div class="seat_ctr flex justify-between text-[#4d4d4d] text-base mb-3">
+                                            <div class="seat_tier text-[#fc790d]">3A</div>
+                                            <div class="seat_price text-base">₹${seatClass.total_fare}</div>
+                                        </div>
+                                        <div class="seat_availabe text-[#fc790d] text-sm">${seatClass.current_status}</div>
+                                        <div class="seat_confirm_percentage text-[#fc790d] text-xs">${seatClass.confirm_probability_percent}% Chance</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>  
                 </div>
+                
                 
                 
             <% }) %>
