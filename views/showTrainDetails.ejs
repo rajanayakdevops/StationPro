@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= PageTitle %></title>
+</head>
+<body>
+    <h1>Train Search Results</h1>
+
+    <!-- Display an error message if one exists -->
+    <% if (errorMessage) { %>
+        <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 20px;">
+            <strong>Error:</strong> <%= errorMessage %>
+        </div>
+    <% } %>
+
+    <!-- Check if traindetails array has data -->
+    <% if (traindetails && traindetails.length > 0) { %>
+        <ul>
+            <% traindetails.forEach(train => { %>
+                <li>
+                    <strong>Train Name:</strong> <%= train.name %><br>
+                    <strong>Train Number:</strong> <%= train.number %><br>
+                    <strong>Departure:</strong> <%= train.departure %><br>
+                    <strong>Arrival:</strong> <%= train.arrival %><br>
+                </li>
+                <hr>
+            <% }) %>
+        </ul>
+    <% } else if (!errorMessage) { %>
+        <!-- Display this message only if there’s no error message and traindetails is empty -->
+        <p>No Train Available.</p>
+    <% } %>
+</body>
+</html>

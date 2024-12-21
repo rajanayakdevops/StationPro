@@ -3,92 +3,109 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>home Page</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="output.css" />
+    <title><%= PageTitle %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <div class="search_ctr_body">
-      <form action="/loginTrainDetails" method="get">
-        <div class="show_search_icon">
-          <div class="train">
+  <body class="bg-gray-200 font-sans">
+    <div class="mx-16 my-10 p-5 bg-white rounded-lg w-[90vw]">
+      <form action="/showAvailTrains" method="post">
+        <!-- Transport Options -->
+        <div class="flex mb-5">
+          <div class="flex items-center mr-5">
             <img
               src="https://edge.ixigo.com/st/vimaan/_next/static/media/train.d3e3d1e5.svg"
               alt="train"
+              class="h-15 w-15"
             />
-            <h3 style="display: inline-flex">Trains</h3>
+            <h3 class="ml-2">Trains</h3>
           </div>
-          <div class="flight">
+          <div class="flex items-center mr-5">
             <img
               src="https://edge.ixigo.com/st/vimaan/_next/static/media/flight.f515b25a.svg"
               alt="flight"
+              class="h-15 w-15"
             />
-            <h3 style="display: inline-flex">Flights</h3>
+            <h3 class="ml-2">Flights</h3>
           </div>
-          <div class="buses">
+          <div class="flex items-center mr-5">
             <img
               src="https://edge.ixigo.com/st/vimaan/_next/static/media/bus.1942c5dd.svg"
               alt="buses"
+              class="h-15 w-15"
             />
-            <h3 style="display: inline-flex">Buses</h3>
+            <h3 class="ml-2">Buses</h3>
           </div>
-          <div class="hotels">
+          <div class="flex items-center mr-5">
             <img
               src="https://edge.ixigo.com/st/vimaan/_next/static/media/hotel.4b63222d.svg"
-              alt=""
+              alt="hotels"
+              class="h-15 w-15"
             />
-            <h3 style="display: inline-flex">Hotels</h3>
+            <h3 class="ml-2">Hotels</h3>
           </div>
         </div>
 
-        <div class="to_from_ctr_body">
-          <div class="from_ctr_body place_details">
-            <label for="name"
-              ><img
+        <!-- Search Fields -->
+        <div class="flex items-center mb-5">
+          <div class="flex items-center mr-8">
+            <label for="from_station">
+              <img
                 src="https://www.confirmtkt.com/img/icons/ic-search-from-desktop.svg"
                 alt="from"
-            /></label>
+                class="h-12 w-12"
+              />
+            </label>
             <input
               type="text"
               id="from_station"
               name="from_station"
               placeholder="BRC - Vadodara"
               required
+              class="bg-gray-200 p-3 rounded-lg text-lg ml-2 focus:outline-none"
             />
           </div>
-          <div class="to_ctr_body place_details">
-            <label for="name"
-              ><img
+          <div class="flex items-center mr-8">
+            <label for="to_station">
+              <img
                 src="https://www.confirmtkt.com/img/icons/ic-search-to-desktop.svg"
-                alt="from"
-            /></label>
+                alt="to"
+                class="h-12 w-12"
+              />
+            </label>
             <input
               type="text"
               id="to_station"
               name="to_station"
-              placeholder="Ak - Akola Jn"
+              placeholder="AK - Akola Jn"
               required
+              class="bg-gray-200 p-3 rounded-lg text-lg ml-2 focus:outline-none"
             />
           </div>
-          <div class="select_date place_details">
-            <label for="date"
-              ><img
+          <div class="flex items-center mr-8">
+            <label for="date">
+              <img
                 src="https://www.confirmtkt.com/img/icons/ic-search-calender-desktop.svg"
                 alt="date"
-            /></label>
+                class="h-12 w-12"
+              />
+            </label>
             <input
               type="date"
               id="date"
               name="travel_date"
               required
+              class="bg-gray-200 p-3 rounded-lg text-lg ml-2 focus:outline-none"
             />
           </div>
-          <div class="search_btn">
-            <input type="submit" value="Search Train" />
+          <div>
+            <input
+              type="submit"
+              value="Search Train"
+              class="bg-orange-500 text-white text-lg px-8 py-3 rounded-lg cursor-pointer hover:bg-orange-600"
+            />
           </div>
         </div>
       </form>
     </div>
-    <script src="../Script/getTrainDetails.js"></script>
   </body>
 </html>

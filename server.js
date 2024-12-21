@@ -22,7 +22,7 @@ app.set('views','views');
 
 
 
-app.use("/user",userRouter);
+app.use(userRouter);
 
 
 // Error middleware
@@ -33,7 +33,7 @@ app.use((req,res,next)=>{
 
 
 // server setup
-const PORT = 3000;
+const PORT = 3001;
 app.listen(PORT,()=>{
   console.log(`Server Started at port ${PORT}`);
 });

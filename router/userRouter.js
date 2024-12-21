@@ -1,10 +1,13 @@
 const express = require('express');
+const userController = require("../controller/userController");
 
 const userRouter = express.Router();
 
-userRouter.get('/',(req,res)=>{
-  res.send(`<h1> welcome to home page </h1>`);
-});
+userRouter.get('/',userController.gethomepage);
+
+
+
+userRouter.post('/showAvailTrains',userController.postShowTrainDetails);
 
 
 exports.userRouter = userRouter;
