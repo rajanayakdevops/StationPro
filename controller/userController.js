@@ -127,6 +127,8 @@ exports.postShowTrainDetails = (req,res)=>{
 // });
 
 function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
+  const result = {};
+  let pendingCalls = 0;
   fs.readFile(seatDetailsDataPath, 'utf8', (error, data) => {
     if (error) {
         console.log("Error while reading the seatDetails:", error.message);
@@ -142,11 +144,26 @@ function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
   
           for (const train of seatDetails) {
             const { train_number, class: seatClasses } = train;
+
+            if (!result[train_number]) {
+              result[train_number] = [];
+            }
     
             // For each class of the train, fetch seat availability
             for (const seatClass of seatClasses) {
+
+              pendingCalls++;
+
               TrainAvailableModel.fetchSeatAvailable(seatClass.value,fromStationCode,toStationCode,train_number,dateOfJourney,(seatAvailable)=>{
-                console.log(seatAvailable);
+
+                result[train_number].push(seatAvailable);
+
+                pendingCalls--;
+
+                if (pendingCalls === 0) {
+                  console.log("All API calls completed:", result);
+                }
+                
               })
             }
           }
