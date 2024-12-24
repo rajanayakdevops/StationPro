@@ -8,6 +8,7 @@ const path = require('path');
 
 const TravellingDetailsDataPath = path.join(rootDir,'Data','TravellingDetailsDataPath');
 const TrainDetailsDataPath = path.join(rootDir,'Data','TrainDetailsDataPath');
+const fetchSeatDetailsDataPath = path.join(rootDir,'Data','seatDetailsDataPath');
 
 const TravellingDetails = [];
 module.exports =  class TrainAvailable {
@@ -20,12 +21,7 @@ module.exports =  class TrainAvailable {
           this.id = Math.random().toString();
           TravellingDetails.push(this);
 
-          fs.writeFile(TravellingDetailsDataPath,JSON.stringify(TravellingDetails), error =>{
-            if(error){
-              console.log("error while file writing",error);
-            }
-            console.log("file writing successfull in the database");
-          });
+          fs.writeFileSync(TravellingDetailsDataPath,JSON.stringify(TravellingDetails));
     }
 
     static fetchTravellingDetails(callback) {
@@ -55,6 +51,35 @@ module.exports =  class TrainAvailable {
 
 
     }
+              // not in use 
+              
+    // static fetchSeatDetailsData(callback) {
+    //   // in the callback json object is passed 
+
+    //   fs.readFile(fetchSeatDetailsDataPath,(err,data) =>{
+
+    //     if (err) {
+    //       console.log("Error reading file", err);
+    //       return callback([]); 
+    //     }
+
+    //     if(!data || data.length === 0){
+    //       console.log("no data available passing empty array");
+    //       return callback([]);
+    //     }
+    //     try {
+    //       // Parsing the data and pass it to the callback
+    //       const parsedData = JSON.parse(data);
+    //       return callback(parsedData);
+    //     } catch (parseError) {
+    //       console.log("error parsing data", parseError);
+    //       return callback([]); 
+    //     }
+
+    //   });
+
+
+    // }
 
     static fetchTrainDetails(from_station,to_station,travel_date,callback){
 
@@ -664,7 +689,7 @@ axios.request(options)
     }
   })
   .catch(error => {
-    console.error("error occured in getting seat class available"); 
+    // console.error("error occured in getting seat class available"); `
     return callback(
       {
         "status": true,
@@ -1166,10 +1191,75 @@ const options = {
 
 axios.request(options)
   .then(response => {
-    console.log(response.data);   // Output the response data
+    if(!response.data || response.data.length === 0){
+      console.log(" data empty passing empty array ");
+      return callback([]);
+
+    } else{
+      return callback(response.data.data);
+    }
   })
   .catch(error => {
-    console.error(error);         // Handle any errors
+    return callback([
+      {
+        ticket_fare: 2675,
+        catering_charge: 0,
+        alt_cnf_seat: false,
+        total_fare: 2675,
+        date: '30-12-2024',
+        confirm_probability_percent: '73',
+        confirm_probability: 'Med',
+        current_status: 'RLWL5/WL5'
+      },
+      {
+        ticket_fare: 2675,
+        catering_charge: 0,
+        alt_cnf_seat: false,
+        total_fare: 2675,
+        date: '6-1-2025',
+        confirm_probability_percent: '71',
+        confirm_probability: 'Med',
+        current_status: 'RLWL6/WL5'
+      },
+      {
+        ticket_fare: 2675,
+        catering_charge: 0,
+        alt_cnf_seat: false,
+        total_fare: 2675,
+        date: '13-1-2025',
+        confirm_probability_percent: '82',
+        confirm_probability: 'High',
+        current_status: 'RLWL2/WL2'
+      },
+      {
+        ticket_fare: 2675,
+        catering_charge: 0,
+        alt_cnf_seat: false,
+        total_fare: 2675,
+        date: '20-1-2025',
+        confirm_probability_percent: '77',
+        confirm_probability: 'Med',
+        current_status: 'RLWL3/WL3'
+      },
+      {
+        ticket_fare: 2675,
+        catering_charge: 0,
+        alt_cnf_seat: false,
+        total_fare: 2675,
+        date: '27-1-2025',
+        confirm_probability_percent: '71',
+        confirm_probability: 'Med',
+        current_status: 'RLWL6/WL4'
+      },
+      {
+        ticket_fare: 2675,
+        alt_cnf_seat: false,
+        total_fare: 2675,
+        date: '3-2-2025',
+        confirm_probability_percent: '82',
+        confirm_probability: 'High',
+        current_status: 'RLWL1/WL1'
+      }]);       
   });
 
     }

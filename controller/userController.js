@@ -2,6 +2,7 @@ const TrainAvailableModel = require("../model/trainAvailable");
 const fs = require('fs');
 const path = require('path');
 const rootDir = require("../utils/rootpath");
+const { promises } = require("dns");
 
 exports.gethomepage = (req,res,next)=>{
   res.render('homepage',{PageTitle: 'homePage'});
@@ -14,10 +15,11 @@ exports.postShowTrainDetails = (req,res)=>{
   const travelDetails = new TrainAvailableModel(from_station,to_station,travel_date);
 
   travelDetails.save();
+
   
-  const from = travelDetails.from_station;
-  const to = travelDetails.to_station;
-  const date = travelDetails.travel_date;
+  const from = from_station;
+  const to = to_station;
+  const date = travel_date;
 
   TrainAvailableModel.fetchTrainDetails(from, to, date, (traindetails) => {
 
@@ -49,13 +51,7 @@ exports.postShowTrainDetails = (req,res)=>{
       };
     });
 
-    fs.writeFile(sortedDetailsDataPath,JSON.stringify(sortedDetails),(error)=>{
-      if(error){
-        console.log("error while writing the sorteDetails ", error);
-      }
-      console.log("file write success in the sortedDetails");
-      
-    });
+    fs.writeFileSync(sortedDetailsDataPath,JSON.stringify(sortedDetails));
 
     const trainNumbers = sortedDetails.map(element =>{
       return { 
@@ -92,22 +88,106 @@ exports.postShowTrainDetails = (req,res)=>{
     const seatDetailsDataPath = path.join(rootDir,'Data','seatDetailsDataPath');
 
     seatClassAvailable().then((seatDetailsArray) => {
-      console.log(JSON.stringify(seatDetailsArray)); 
-      fs.writeFile(seatDetailsDataPath,JSON.stringify(seatDetailsArray),(error)=>{
-        console.log(" file written success in seatDetailsDataPath ");
-      })
+      // console.log(JSON.stringify(seatDetailsArray)); 
+      fs.writeFileSync(seatDetailsDataPath,JSON.stringify(seatDetailsArray));
+      fetchSeatDetails(from,to,date);
     }).catch((error) => {
       console.error("Error fetching seat class details:", error);
     });
     
-    // TrainAvailableModel.fetchSeatAvailable(){
-      
-    // }
+    ////////////////////////
+
+    // not in use 
+    // let seatClassArray = [];
+    // const finalTrainDetails = path.join(rootDir,'Data','finalTrainDetails');
+
+
     
+// TrainAvailableModel.fetchSeatDetailsData((seatDetails) => {
+//   Promise.all(
+//     seatDetails.map(async (train) => {
+//       // Create a new object with only the relevant keys
+//       return {
+//         train_number: train.train_number,
+//         class: train.class,
+//       };
+//     })
+//   )
+//     .then((resolvedArray) => {
+//       seatClassArray = resolvedArray;
+      
+//       fs.writeFileSync(finalTrainDetails,JSON.stringify(seatClassArray));
+      
+//     })
+//     .catch((error) => {
+//       console.error("Error processing seat details:", error);
+//     });
+
+    
+// });
+
+function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
+  fs.readFile(seatDetailsDataPath, 'utf8', (error, data) => {
+    if (error) {
+        console.log("Error while reading the seatDetails:", error.message);
+        return;
+    }
+  
+    try {
+        // Parse the JSON data
+        const seatDetails = JSON.parse(data);
+  
+        // Check if the parsed data is an array
+        if (Array.isArray(seatDetails)) {
+  
+          for (const train of seatDetails) {
+            const { train_number, class: seatClasses } = train;
+    
+            // For each class of the train, fetch seat availability
+            for (const seatClass of seatClasses) {
+              TrainAvailableModel.fetchSeatAvailable(seatClass.value,fromStationCode,toStationCode,train_number,dateOfJourney,(seatAvailable)=>{
+                console.log(seatAvailable);
+              })
+            }
+          }
+  
+  
+  
+  
+            
+        } else {
+            console.log("Data is not an array");
+        }
+    } catch (parseError) {
+        console.log("Error parsing JSON data:", parseError.message);
+    }
+  });
+  
+}
+      
+
+          //////////////////////////////////////////
+            
+
+
+
+          /////////////////////////////
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
 
   
-    
-
     
     res.render("showTrainDetails", {
       traindetails: sortedDetails,
