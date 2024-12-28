@@ -66,6 +66,8 @@ exports.postShowTrainDetails = (req,res)=>{
       const seatDetailsArray = await Promise.all(
         trainNumbers.map(async (element) => {
           return new Promise((resolve, reject) => {
+            // currently the function is providing the details of a single train but in actual api call it will 
+            // return the details of the train number that will be passed
             TrainAvailableModel.fetchTrainAvailClasses(element, (seatDetails) => {
               if (!seatDetails || seatDetails.data === 0) {
                 console.log("empty seatDetails  returning empty object");
@@ -81,7 +83,8 @@ exports.postShowTrainDetails = (req,res)=>{
           });
         })
       );
-    
+    // for now the this seatDetaisArray consist of single trian details even after passing multiple train number
+    // contain duplicate element 
       return seatDetailsArray;
     };
 
@@ -89,8 +92,10 @@ exports.postShowTrainDetails = (req,res)=>{
 
     seatClassAvailable().then((seatDetailsArray) => {
       // console.log(JSON.stringify(seatDetailsArray)); 
+  
+      //  here in this duplicate train details is stored  
       fs.writeFileSync(seatDetailsDataPath,JSON.stringify(seatDetailsArray));
-      fetchSeatDetails(from,to,date);
+      
     }).catch((error) => {
       console.error("Error fetching seat class details:", error);
     });
@@ -126,13 +131,16 @@ exports.postShowTrainDetails = (req,res)=>{
     
 // });
 
-function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
+
+
+function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney,callback){
   const result = {};
   let pendingCalls = 0;
+  // this seatDetailsPath contains duplicate elements so function call is made to the same train number 
   fs.readFile(seatDetailsDataPath, 'utf8', (error, data) => {
     if (error) {
         console.log("Error while reading the seatDetails:", error.message);
-        return;
+        return callback(error);
     }
   
     try {
@@ -155,13 +163,15 @@ function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
               pendingCalls++;
 
               TrainAvailableModel.fetchSeatAvailable(seatClass.value,fromStationCode,toStationCode,train_number,dateOfJourney,(seatAvailable)=>{
-
+                
+                // in this the result is having the details of a single train number with corresonding seat availabe 
                 result[train_number].push(seatAvailable);
 
                 pendingCalls--;
 
                 if (pendingCalls === 0) {
-                  console.log("All API calls completed:", result);
+                  console.log("All API calls completed:");
+                  return callback(null,result);
                 }
                 
               })
@@ -173,22 +183,48 @@ function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
   
             
         } else {
-            console.log("Data is not an array");
+          callback(new Error("Data is not an array"));
         }
     } catch (parseError) {
-        console.log("Error parsing JSON data:", parseError.message);
+      callback(parseError);
     }
   });
   
 }
+
+let trainJourneyDetails = []; // Initialize an empty array
+
+fetchSeatDetails(from, to, date, (error, details_seat) => {
+  if (error) {
+    console.error("Error fetching seat details:", error);
+    return;
+  }
+
+ 
+  trainJourneyDetails = details_seat;
+
+  console.log(trainJourneyDetails);
+
+ return res.render("showTrainDetails", {
+    traindetails: sortedDetails,
+    trainJourneyDetails: trainJourneyDetails,
+    errorMessage: "",
+    PageTitle: 'trainSearchResult',
+  });
+
+
+  
+  
+ 
+
+  
+});
+
+
+
       
 
-          //////////////////////////////////////////
-            
-
-
-
-          /////////////////////////////
+          
 
 
       
@@ -206,11 +242,11 @@ function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
 
   
     
-    res.render("showTrainDetails", {
-      traindetails: sortedDetails,
-      errorMessage: "",
-      PageTitle: 'trainSearchResult',
-    });
+    // res.render("showTrainDetails", {
+    //   traindetails: sortedDetails,
+    //   errorMessage: "",
+    //   PageTitle: 'trainSearchResult',
+    // });
   });
 
   
