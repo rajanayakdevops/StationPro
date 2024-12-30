@@ -8,14 +8,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/output.css">
     <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    crossorigin="anonymous"
-  />
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-  />
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous"
+    />
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
 </head>
 <body class="bg-gray-100">
 
@@ -31,7 +31,7 @@
     <!-- Check if traindetails array has data -->
     <% if (traindetails && traindetails.length > 0) { %>
         <div class="w-full bg-gray-100">
-            <% traindetails.forEach(train => { %>
+            <% traindetails.data.forEach(train => { %>
                 <div class="bg-white w-11/12 mx-auto my-5 p-5 rounded-lg shadow-lg">
                     <div class="flex items-center pb-5 border-b-2 border-gray-200">
                         <div class="flex-1 mx-5">
@@ -69,28 +69,44 @@
                             <i class="fa-solid fa-angle-down ml-2"></i>
                         </button>
                     </div>
-                 
 
-                 <div class="train_class flex">
-                        <div class="show_seat_available p-6">
-                            <a href="#" class="no-underline">
-                                <div class="seat_according_tier w-36 border border-[#fc790d] border-opacity-30 rounded-xl p-2 bg-[#fff5e5]">
-                                    <div class="seat_available_report mx-2">
-                                        <div class="seat_ctr flex justify-between text-[#4d4d4d] text-base mb-3">
-                                            <div class="seat_tier text-[#fc790d]">3A</div>
-                                            <div class="seat_price text-base">₹${seatClass.total_fare}</div>
-                                        </div>
-                                        <div class="seat_availabe text-[#fc790d] text-sm">${seatClass.current_status}</div>
-                                        <div class="seat_confirm_percentage text-[#fc790d] text-xs">${seatClass.confirm_probability_percent}% Chance</div>
+                    <% if (trainJourneyDetails && trainJourneyDetails["12936"] && trainJourneyDetails["12936"].length > 0) { %>
+                        <div class="train_class flex">
+                            <% const seats = trainJourneyDetails["12936"]; 
+                            seats.forEach(seat => { %>
+                            <div class="show_seat_available p-6">
+                                <a href="#" class="no-underline">
+                                    <div class="seat_according_tier flex space-x-6 border border-[#fc790d] border-opacity-30 rounded-xl p-2 bg-[#fff5e5]">
+                                        <!-- Added space-x-6 to create horizontal spacing -->
+                                        <div class="seat_available_report flex space-x-4"> <!-- Adjust the spacing here as needed -->
+                                           
+                                            <div class="seat_ctr flex flex-col text-[#4d4d4d] text-xs mb-4 mx-4"> <!-- Added mx-4 for left and right margin -->
+                                                <div class="seat_tier text-[#fc790d] text-xs px-2 w-auto">
+                                                    <%= seat.seatClass %>
+                                                </div>
+                                                <div class="seat_price text-xs px-2 w-auto">
+                                                    <%= seat.seatAvailable.ticket_fare %>
+                                                </div>
+                                                <div class="seat_availabe text-[#fc790d] text-xs px-2 w-auto">
+                                                    <%= seat.seatAvailable.current_status %>
+                                                </div>
+                                                <div class="seat_confirm_percentage text-[#fc790d] text-xs px-2 w-auto">
+                                                    <%= seat.seatAvailable.confirm_probability %> Chance
+                                                </div>
+                                            </div>
+                                            
+                                        </div> 
                                     </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>  
+                                </a>
+                            </div>
+                            <% }) %>
+                        </div>  
+                    <% } else { %>
+                        <!-- Handle the case where there are no train journey details -->
+                        <p class="text-center text-lg text-gray-600">No Journey Details Available.</p>
+                    <% } %>
+
                 </div>
-                
-                
-                
             <% }) %>
         </div>
 
