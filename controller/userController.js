@@ -45,7 +45,13 @@ function getTrainData() {
           PageTitle: 'trainSearchResult',
         });
       }
-      console.log("passing the train details ");
+      for (const train of trainDetailsData.data) {
+        console.log('Class Type:', JSON.stringify(train.class_type));  // Log the entire object
+      }
+   
+      
+      
+      
       return res.render("showTrainDetails", {
         traindetails: trainDetailsData,
         errorMessage: "",
@@ -56,10 +62,51 @@ function getTrainData() {
 // Example usage
 (async () => {
     await storeTrainData(from,to,date);  // Store data
+    fetchSeatDetails(from,to,date);
     getTrainData();  // get train detail 
 })();
 
 
+    
+   function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
+    let result = {data:[]};
+  let pendingCalls = 0;
+  for (const train of trainDetailsData.data) {
+    const { train_number, class_type: seatTiers } = train;
+    let newObj = {};
+    newObj.train_number = train_number;
+
+    // For each class of the train, fetch seat availability
+    for (const seatTier of seatTiers) {
+      pendingCalls++;
+
+    TrainAvailableModel.fetchSeatAvailable(seatTier,fromStationCode,toStationCode,train_number,dateOfJourney,(seatAvailable)=>{
+        
+        // in this the result is having the details of a single train number with corresonding seat availabe 
+
+        let seatInfoObj = {}; // New object for each seatTier response
+        seatInfoObj.seatClass = seatTier;
+        seatInfoObj.seatAvailable = seatAvailable;
+        
+        // Add the seat information to the new object
+        newObj.seatInfo = seatInfoObj;
+
+        result.data.push(newObj); // Push the new object to the result array
+
+        pendingCalls--;
+
+        if (pendingCalls === 0) {
+          console.log("All API calls completed:");
+          return result;
+        }
+        
+      })
+    }
+  }
+  
+ 
+  
+}
 
  
   
