@@ -29,7 +29,7 @@
     <% } %>
 
     <!-- Check if traindetails array has data -->
-    <% if (traindetails && traindetails.length > 0) { %>
+    <% if (traindetails && Object.keys(traindetails).length> 0) { %>
         <div class="w-full bg-gray-100">
             <% traindetails.data.forEach(train => { %>
                 <div class="bg-white w-11/12 mx-auto my-5 p-5 rounded-lg shadow-lg">
@@ -70,17 +70,26 @@
                         </button>
                     </div>
 
-                    <% if (trainJourneyDetails && trainJourneyDetails["12936"] && trainJourneyDetails["12936"].length > 0) { %>
+                    <% if (trainJourneyDetails && trainJourneyDetails.length > 0) { %>
                         <div class="train_class flex">
-                            <% const seats = trainJourneyDetails["12936"]; 
-                            seats.forEach(seat => { %>
-                            <div class="show_seat_available p-6">
+                            <% trainJourneyDetails.forEach(seats => { 
+
+                                if(seats.train_number == train.train_number ){
+
+                                const seatInfo = seats.seatInfo; // Extract seatInfo for the seats
+
+                                Object.keys(seatInfo).forEach(seatClass => {
+                                    const seat = seatInfo[seatClass]; // Access details for each seat class
+                            %>
+                            
+                             <div class="show_seat_available p-6">
                                 <a href="#" class="no-underline">
                                     <div class="seat_according_tier flex space-x-6 border border-[#fc790d] border-opacity-30 rounded-xl p-2 bg-[#fff5e5]">
-                                        <!-- Added space-x-6 to create horizontal spacing -->
-                                        <div class="seat_available_report flex space-x-4"> <!-- Adjust the spacing here as needed -->
+                                        
+                                        <div class="seat_available_report flex space-x-4"> 
+                                            
                                            
-                                            <div class="seat_ctr flex flex-col text-[#4d4d4d] text-xs mb-4 mx-4"> <!-- Added mx-4 for left and right margin -->
+                                            <div class="seat_ctr flex flex-col text-[#4d4d4d] text-xs mb-4 mx-4"> 
                                                 <div class="seat_tier text-[#fc790d] text-xs px-2 w-auto">
                                                     <%= seat.seatClass %>
                                                 </div>
@@ -99,12 +108,23 @@
                                     </div>
                                 </a>
                             </div>
-                            <% }) %>
+                            
+                        <% })
+                              }
+                                })
+                                %>
+                        
+
+
+                              
+
+                            
                         </div>  
                     <% } else { %>
-                        <!-- Handle the case where there are no train journey details -->
                         <p class="text-center text-lg text-gray-600">No Journey Details Available.</p>
                     <% } %>
+                    
+                    
 
                 </div>
             <% }) %>

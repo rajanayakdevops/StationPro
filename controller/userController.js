@@ -34,81 +34,98 @@ async function storeTrainData(from_station, to_station, travel_date) {
         console.log("No data to store.");
     }
 }
-
-// Get stored train details
-function getTrainData() {
-    if (!trainDetailsData || trainDetailsData.length === 0) {
-        console.log("array is empty ");
-        return res.render("showTrainDetails", {
-          traindetails: [],
-          errorMessage: "No trains available for the selected route and date.",
-          PageTitle: 'trainSearchResult',
-        });
-      }
-      for (const train of trainDetailsData.data) {
-        console.log('Class Type:', JSON.stringify(train.class_type));  // Log the entire object
-      }
-   
-      
-      
-      
-      return res.render("showTrainDetails", {
-        traindetails: trainDetailsData,
-        errorMessage: "",
-        PageTitle: 'trainSearchResult',
-      });
-}
-
-// Example usage
-(async () => {
-    await storeTrainData(from,to,date);  // Store data
-    fetchSeatDetails(from,to,date);
-    getTrainData();  // get train detail 
-})();
+  
 
 
-    
-   function fetchSeatDetails(fromStationCode,toStationCode,dateOfJourney){
-    let result = {data:[]};
-  let pendingCalls = 0;
+let trainJourneyDetails = { data: [] };
+async function fetchSeatDetails(fromStationCode, toStationCode, dateOfJourney) {
+  
+  
+  let promises = []; // Array to hold promises
+
   for (const train of trainDetailsData.data) {
     const { train_number, class_type: seatTiers } = train;
-    let newObj = {};
-    newObj.train_number = train_number;
+
+    // Initialize the train data object
+    let trainData = {
+      train_number: train_number,
+      seatInfo: {} // Start with an empty object to hold seat classes
+    };
 
     // For each class of the train, fetch seat availability
     for (const seatTier of seatTiers) {
-      pendingCalls++;
+      
 
-    TrainAvailableModel.fetchSeatAvailable(seatTier,fromStationCode,toStationCode,train_number,dateOfJourney,(seatAvailable)=>{
-        
-        // in this the result is having the details of a single train number with corresonding seat availabe 
+      // Create a new object for each seat class
+      let seatClassObj = {
+        seatClass: seatTier, // The seat class
+      };
 
-        let seatInfoObj = {}; // New object for each seatTier response
-        seatInfoObj.seatClass = seatTier;
-        seatInfoObj.seatAvailable = seatAvailable;
-        
-        // Add the seat information to the new object
-        newObj.seatInfo = seatInfoObj;
+      // Create a promise for each API call
+      let seatPromise = new Promise((resolve, reject) => {
+        TrainAvailableModel.fetchSeatAvailable(seatTier, fromStationCode, toStationCode, train_number, dateOfJourney, (seatAvailable) => {
+          // Add seat availability data to the corresponding seat class object
+          seatClassObj.seatAvailable = seatAvailable;
 
-        result.data.push(newObj); // Push the new object to the result array
+          // Add the seat class object to the trainData object inside the seatInfo
+          trainData.seatInfo[seatTier] = seatClassObj;
 
-        pendingCalls--;
+          resolve(); // Resolve the promise when the API call is complete
+        });
+      });
 
-        if (pendingCalls === 0) {
-          console.log("All API calls completed:");
-          return result;
-        }
-        
-      })
+      // Push each seatPromise to the promises array
+      promises.push(seatPromise);
     }
+
+    // After looping over all seat classes, push the trainData object to the result
+    // This ensures that the seatInfo object contains separate entries for each seat class
+    await Promise.all(promises); // Wait for all promises for this train to resolve
+    trainJourneyDetails.data.push(trainData); // Push the trainData after all promises are resolved
   }
-  
- 
-  
+
+  console.log("All API calls completed:");
+  return trainJourneyDetails; // Return the result after all API calls are completed
 }
 
- 
+
+
+ // Get stored train details
+function getTrainData() {
+  if ( trainDetailsData.length === 0 && trainJourneyDetails.length === 0 ) {
+      console.log("array is empty ");
+      return res.render("showTrainDetails", {
+        traindetails: [],
+        trainJourneyDetails: [],
+        errorMessage: "No trains available for the selected route and date.",
+        PageTitle: 'trainSearchResult',
+      });
+    }
+    console.log("trainJourneyDetails : ", JSON.stringify(trainJourneyDetails));
+    return res.render("showTrainDetails", {
+      traindetails: trainDetailsData,
+      trainJourneyDetails: trainJourneyDetails,
+      errorMessage: "",
+      PageTitle: 'trainSearchResult',
+    });
+}
+
+
+// function call 
+(async () => {
+  await storeTrainData(from,to,date);  // Store data
+  fetchSeatDetails(from,to,date)
+.then(result => {
+  trainJourneyDetails = result.data;
+
+  getTrainData();
+})
+.catch(error => {
+  console.error("Error fetching seat details:", error);
+});
+
+    
+})();
   
   
 
